@@ -1,0 +1,51 @@
+@use "../abstracts/" as *;
+
+body {
+    height: 100vh;
+    font-family: "KoHo";
+    display: flex;
+    overflow: hidden;
+}
+
+// ==== HEADER - Lateral left ====
+.menu-lateral {
+    width: 15%;
+    background: linear-gradient(0deg, rgb(57, 0, 55) 0%, rgb(32, 27, 76) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    .logo {
+        margin-top: 3rem;
+    }
+    .themes {
+        margin-bottom: 3rem;
+        color: #ffffff;
+
+        .active {
+            display: none;
+        }
+    }
+    &.active {
+        background: linear-gradient(0deg, rgb(62, 11, 39) 0%, rgb(165, 14, 75) 100%);
+    }
+}
+
+// ==== HEADER - Top main ====
+.menu-top {
+    padding: 2rem;
+    background-color: #faf5fc;
+
+    nav > a {
+        color: #7f00bb;
+        text-decoration: none;
+        text-transform: capitalize;
+        font-size: 2rem;
+        margin: 0 1.5rem;
+
+        &:hover, &.active {
+            font-weight: 900;
+        }
+    }
+}
