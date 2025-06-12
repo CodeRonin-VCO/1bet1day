@@ -107,3 +107,4 @@ function renderAll() {
     renderBets();
     renderEarnings();
 }
+init();
