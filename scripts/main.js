@@ -1,21 +1,21 @@
 // ==== Sélections ====
-const moonTheme         = document.querySelector(".theme-moon");
-const sunTheme          = document.querySelector(".theme-sun");
-const main              = document.querySelector("main");
+const btnMoonTheme          = document.querySelector(".theme-moon");
+const btnSunTheme           = document.querySelector(".theme-sun");
+const tagMain               = document.querySelector("main");
 
 // Affichage paris
-const displayTeams      = document.querySelector(".display-teams");
-const displayBets       = document.querySelector(".display-bets");
+const containerTeamList     = document.querySelector(".display-teams");
+const containerBtnBet       = document.querySelector(".display-bets");
 
 // Affichage mes paris
-const displaySelected   = document.querySelector(".display-selected");
-const inputBet          = document.querySelector("#bet");
-const displayBetFactor  = document.querySelector(".display-bet-factor");
-const displayEarnings   = document.querySelector(".display-earnings");
+const containerSelectedBet  = document.querySelector(".display-selected");
+const inputBetAmount        = document.querySelector("#bet");
+const containerTotalOdds    = document.querySelector(".display-bet-factor");
+const containerEarnings     = document.querySelector(".display-earnings");
 
 // ==== Variables ====
-const arrBgImages = [`../images/bg1.png`, `../images/bg2.png`, `../images/bg3.png`, `../images/bg.jpg`]
-let arrSelectedBets = [];
+const ARRAY_BACKGROUND_IMAGES = [`../images/bg1.png`, `../images/bg2.png`, `../images/bg3.png`, `../images/bg.jpg`]
+let arraySelectedBets = [];
 
 // ==== Fonctions utilitaires ==== 
 function createElement(tag, className, content) {
@@ -34,8 +34,8 @@ function appendElement(parent, child) {
 }
 
 // ==== Random bg-img ====
-const randomBg = arrBgImages[Math.floor(Math.random()*arrBgImages.length)]
-main.style.background = `url(${randomBg}) no-repeat right bottom/40%`;
+const randomBg = ARRAY_BACKGROUND_IMAGES[Math.floor(Math.random()*ARRAY_BACKGROUND_IMAGES.length)]
+tagMain.style.background = `url(${randomBg}) no-repeat right bottom/40%`;
 
 // ==== API & Async fct° ====
 async function getApi() {
@@ -57,37 +57,37 @@ async function displayApi() {
     matches.forEach(match => {
         // Affichage "équipe"
         const teams = createElement("div", "", `${match.hometeam}-${match.awayteam}`)
-        appendElement(displayTeams, teams);
+        appendElement(containerTeamList, teams);
 
         // Affichage "indice score"
         const indiceScore = createElement("div", `matchId-${match.match_id}`, `
         <button class="btn-choice" data-bet="home" data-id="${match.match_id}">${match.home_odd}</button> 
         <button class="btn-choice" data-bet="draw" data-id="${match.match_id}">${match.draw_odd}</button> 
         <button class="btn-choice" data-bet="away" data-id="${match.match_id}">${match.away_odd}</button>`);
-        appendElement(displayBets, indiceScore)
+        appendElement(containerBtnBet, indiceScore)
     });
 }
 displayApi();
 
 // ==== Fonctions ====
 function displayChosenBets() {
-    displaySelected.innerHTML = "";
+    containerSelectedBet.innerHTML = "";
 
-    arrSelectedBets.forEach(element => {
+    arraySelectedBets.forEach(element => {
         const info = createElement("div", "info", ``);
         const infoTitle = createElement("h4", "info__title", `${element.homeTeam}`);
         const infoScore = createElement("div", "info__score", `${element.betValue}`);
         const infoDelete = createElement("button", "info__delete", `🗑️`);
         const infoTeams = createElement("small", "info__teams", `${element.homeTeam}-${element.awayTeam}`);
 
-        appendElement(displaySelected, info);
+        appendElement(containerSelectedBet, info);
         appendElement(info, infoTitle);
         appendElement(info, infoScore);
         appendElement(info, infoDelete);
         appendElement(info, infoTeams);
 
         infoDelete.addEventListener("click", function (event) {
-            arrSelectedBets = arrSelectedBets.filter(bet => bet.matchId !== element.matchId);
+            arraySelectedBets = arraySelectedBets.filter(bet => bet.matchId !== element.matchId);
 
             // Retirer la classe du tableau
             document.querySelectorAll(`.btn-choice[data-id="${element.matchId}"]`).forEach(btn => {
@@ -100,31 +100,31 @@ function displayChosenBets() {
     });
 };
 function displayTotalBetFactor() {
-    displayBetFactor.innerHTML = "";
+    containerTotalOdds.innerHTML = "";
 
-    const totalFactor = arrSelectedBets.reduce((accumulator, bet) => accumulator + parseFloat(bet.betValue), 0)
+    const totalFactor = arraySelectedBets.reduce((accumulator, bet) => accumulator + parseFloat(bet.betValue), 0)
 
     const label = createElement("div", "", "Cote totale:");
     const tf = createElement("span", "total-factor", `${totalFactor.toFixed(2)}`);
 
-    appendElement(displayBetFactor, label);
-    appendElement(displayBetFactor, tf)
+    appendElement(containerTotalOdds, label);
+    appendElement(containerTotalOdds, tf)
     displayTotalEarnings()
 }
 function displayTotalEarnings() {
-    displayEarnings.innerHTML = "";
+    containerEarnings.innerHTML = "";
 
-    const totalEarnings = parseFloat(document.querySelector(".total-factor").textContent) * parseFloat(inputBet.value);
+    const totalEarnings = parseFloat(document.querySelector(".total-factor").textContent) * parseFloat(inputBetAmount.value);
 
     if (!isNaN(totalEarnings)) {
-        displayEarnings.innerHTML = `<div>Gain potentiel:</div> <span>${totalEarnings.toFixed(2)} €</span>`;
+        containerEarnings.innerHTML = `<div>Gain potentiel:</div> <span>${totalEarnings.toFixed(2)} €</span>`;
     } else {
-        displayEarnings.innerHTML = `<div>Gain potentiel:</div> <span>0.00 €</span>`;
+        containerEarnings.innerHTML = `<div>Gain potentiel:</div> <span>0.00 €</span>`;
     }
 }
 
 // ==== Evénements ====
-displayBets.addEventListener("click", async function (event) {
+containerBtnBet.addEventListener("click", async function (event) {
     event.preventDefault();
 
     // Récupérer le bouton
@@ -142,7 +142,7 @@ displayBets.addEventListener("click", async function (event) {
                 el.classList.remove("active")
 
                 // Générer un nouveau tableau filtré (seuls les objets de pari dont l'identifiant de match ne correspond pas à matchId sont inclus dans le nouveau tableau.)
-                arrSelectedBets = arrSelectedBets.filter(bet => bet.matchId !== matchId);
+                arraySelectedBets = arraySelectedBets.filter(bet => bet.matchId !== matchId);
                 displayChosenBets()
             })
 
@@ -162,7 +162,7 @@ displayBets.addEventListener("click", async function (event) {
                 };
 
                 // Ajouter l'objet de pari au tableau
-                arrSelectedBets.push(betObject);
+                arraySelectedBets.push(betObject);
                 document.querySelector("aside").classList.add("active")
                 displayChosenBets()
                 displayTotalBetFactor()
@@ -173,4 +173,4 @@ displayBets.addEventListener("click", async function (event) {
 
 
 //!!! indispensable pour que la mise à jour se fasse lorsque l'utilisateur tape une mise
-inputBet.addEventListener("input", displayTotalEarnings);
+inputBetAmount.addEventListener("input", displayTotalEarnings);
